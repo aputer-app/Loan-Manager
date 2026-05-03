@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Optimized for mobile devices: prevents weird zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Loan Manager</title>
     <style>
         :root {
@@ -25,13 +26,13 @@
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 20px 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
         }
 
         .container {
             background: var(--card-bg);
-            padding: 0.5rem;
+            padding: 2.5rem;
             border-radius: 1.5rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
             width: 100%;
@@ -40,14 +41,12 @@
 
         h2, h3 { text-align: center; color: var(--primary-color); margin-top: 0; }
         
-        /* Auth Screen Styles */
         #auth_screen { display: block; text-align: center; }
         .auth-toggle { color: var(--primary-color); cursor: pointer; text-decoration: underline; font-size: 0.9rem; margin-top: 1rem; display: inline-block;}
         
-        /* App Screen Styles */
         #app_screen { display: none; }
         .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
-        .logout-btn { background: #ef4444; padding: 0.5rem 1rem; font-size: 0.8rem; width: auto; margin: 0; }
+        .logout-btn { background: #ef4444; color: white; border: none; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.8rem; cursor: pointer; }
         .logout-btn:hover { background: #dc2626; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -69,32 +68,37 @@
         .term-toggle input[type="radio"] { display: none; }
         .term-toggle input[type="radio"]:checked + label { background: var(--primary-color); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        button { width: 100%; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; margin-top: 0.5rem; }
-        button:hover { background-color: var(--primary-hover); }
-        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        button.primary-btn { width: 100%; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; margin-top: 0.5rem; }
+        button.primary-btn:hover { background-color: var(--primary-hover); }
         
-        .btn-secondary { background-color: #f8fafc; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 1rem; }
+        .btn-secondary { width: 100%; padding: 1rem; background-color: #f8fafc; color: var(--primary-color); border: 2px solid var(--primary-color); border-radius: 0.75rem; font-weight: 600; margin-top: 1rem; cursor: pointer; }
         .btn-secondary:hover { background-color: var(--result-bg); }
 
         .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; animation: fadeIn 0.4s ease-out; }
         .card { background-color: var(--result-bg); padding: 1rem; border-radius: 1rem; text-align: center; }
         .card span { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem; }
-        .card strong { font-size: 1.2rem; color: var(--primary-hover); }
+        .card strong { font-size: 1.1rem; color: var(--primary-hover); }
 
-        .schedule-container { margin-top: 2rem; max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 0.75rem; animation: fadeIn 0.5s ease-out; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th, td { padding: 0.75rem 1rem; text-align: right; border-bottom: 1px solid var(--border-color); }
-        th { background-color: #f8fafc; position: sticky; top: 0; font-weight: 600; color: var(--text-muted); box-shadow: 0 1px 0 var(--border-color); }
-        th:first-child, td:first-child { text-align: left; }
-        
         .saved-list { margin-top: 2rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem; }
-        .saved-item { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        .saved-item { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
         .saved-item div span { display: block; font-size: 0.8rem; color: var(--text-muted); }
         
         .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
         .success-msg { color: var(--primary-color); margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ==========================================
+           📱 MOBILE DEDICATED STYLES 
+           ========================================== */
+        @media (max-width: 600px) {
+            body { padding: 0; background-color: var(--card-bg); }
+            .container { padding: 1.5rem; border-radius: 0; box-shadow: none; min-height: 100vh; }
+            .grid-2 { grid-template-columns: 1fr; gap: 0; }
+            .summary-cards { grid-template-columns: 1fr; gap: 0.75rem; }
+            .saved-item { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+            .saved-item div { text-align: left !important; width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -115,7 +119,7 @@
             <input type="password" id="auth_pass" required>
         </div>
         
-        <button id="auth_btn" onclick="handleAuth()">Sign In</button>
+        <button class="primary-btn" id="auth_btn" onclick="handleAuth()">Sign In</button>
         <div id="auth_error" class="error-msg"></div>
         
         <span class="auth-toggle" onclick="toggleAuthMode()" id="auth_toggle_text">Need an account? Sign Up here.</span>
@@ -165,7 +169,7 @@
                 <input type="number" id="months" step="1" min="1">
             </div>
             
-            <button type="submit">Calculate EMI</button>
+            <button class="primary-btn" type="submit">Calculate EMI</button>
         </form>
 
         <div id="results_container"></div>
@@ -184,13 +188,14 @@
     </div>
 </div>
 
-<!-- FIREBASE SDKs (Modular version 9+) -->
+<!-- REALTIME DATABASE SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
         from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } 
-        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    // Switched from Firestore to Realtime Database
+    import { getDatabase, ref, push, set, query, orderByChild, equalTo, get } 
+        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     // ==========================================
     // ⚠️ PASTE YOUR FIREBASE CONFIG HERE ⚠️
@@ -206,14 +211,12 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = getDatabase(app); // Initializing Realtime Database
 
-    // Global variables
     let isLoginMode = true;
     let currentUser = null;
-    let currentCalculation = null; // Holds data temporarily to save it
+    let currentCalculation = null;
 
-    // ================== AUTH LOGIC ==================
     window.toggleAuthMode = () => {
         isLoginMode = !isLoginMode;
         document.getElementById('auth_title').innerText = isLoginMode ? "Sign In" : "Create Account";
@@ -241,7 +244,6 @@
 
     window.logOut = () => { signOut(auth); };
 
-    // Listen for login state changes
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
@@ -255,23 +257,28 @@
         }
     });
 
-    // ================== DATABASE LOGIC ==================
+    // ================== REALTIME DATABASE LOGIC ==================
     window.saveCalculation = async () => {
         if (!currentUser || !currentCalculation) return;
         const msgDiv = document.getElementById('save_msg');
-        msgDiv.innerText = "Saving...";
+        msgDiv.innerText = "Saving to database...";
+        msgDiv.style.color = "var(--text-muted)";
         
         try {
-            await addDoc(collection(db, "calculations"), {
+            const calcRef = ref(db, 'calculations');
+            const newCalcRef = push(calcRef);
+            await set(newCalcRef, {
                 userId: currentUser.uid,
                 timestamp: new Date().toISOString(),
                 ...currentCalculation
             });
+            
             msgDiv.innerText = "Saved successfully!";
+            msgDiv.style.color = "var(--primary-color)";
             setTimeout(() => msgDiv.innerText = "", 3000);
             fetchSavedCalculations();
         } catch (error) {
-            msgDiv.innerText = "Error saving. Check console.";
+            msgDiv.innerText = "Error saving data. Check rules.";
             msgDiv.style.color = "red";
             console.error(error);
         }
@@ -282,18 +289,20 @@
         if (!currentUser) return;
         
         try {
-            const q = query(collection(db, "calculations"), where("userId", "==", currentUser.uid));
-            const querySnapshot = await getDocs(q);
+            const calcRef = ref(db, 'calculations');
+            const userQuery = query(calcRef, orderByChild('userId'), equalTo(currentUser.uid));
+            const snapshot = await get(userQuery);
             
-            if (querySnapshot.empty) {
+            if (!snapshot.exists()) {
                 container.innerHTML = "<p style='text-align:center; color:#64748b; font-size:0.9rem;'>No saved calculations yet.</p>";
                 return;
             }
 
             let html = "";
-            // Sort by newest first natively in JS array
             const docs = [];
-            querySnapshot.forEach((doc) => docs.push(doc.data()));
+            snapshot.forEach((childSnapshot) => {
+                docs.push(childSnapshot.val());
+            });
             docs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             docs.forEach((data) => {
@@ -312,7 +321,7 @@
             });
             container.innerHTML = html;
         } catch (error) {
-            container.innerHTML = "Error loading data. Note: If you just created the Test database, wait 1 minute and refresh.";
+            container.innerHTML = "<p style='color:red; text-align:center;'>Unable to load data. Please update Database Rules.</p>";
             console.error(error);
         }
     }
@@ -337,7 +346,6 @@
     function formatINR(amount) {
         return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
     }
-    window.formatINR = formatINR;
 
     window.calculateLoan = () => {
         const principal = parseFloat(document.getElementById('principal').value);
@@ -364,10 +372,8 @@
             const totalPayment = emi * totalMonths;
             const totalInterest = totalPayment - principal;
 
-            // Prepare data for saving
             currentCalculation = { principal, rate: enteredRate, months: totalMonths, emi, totalInterest, totalPayment };
 
-            // Render Output
             let htmlOutput = `
             <div class='summary-cards'>
                 <div class='card'><span>Monthly EMI</span><strong>${formatINR(emi)}</strong></div>
@@ -376,11 +382,10 @@
             </div>`;
             
             document.getElementById('results_container').innerHTML = htmlOutput;
-            document.getElementById('save_container').style.display = 'block'; // Show save button
+            document.getElementById('save_container').style.display = 'block';
         }
     };
     
-    // Init inputs on load
     toggleInputs();
 </script>
 
