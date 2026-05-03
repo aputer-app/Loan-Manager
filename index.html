@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Loan Manager</title>
     <style>
+        /* MODERN COLOR PALETTE & VARIABLES */
         :root {
             --primary-color: #10b981;
             --primary-hover: #059669;
-            --bg-color: #ecfdf5;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
-            --text-main: #064e3b;
-            --text-muted: #475569;
-            --result-bg: #d1fae5;
-            --border-color: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --result-bg: #f8fafc;
+            --border-color: #e2e8f0;
+            --danger-color: #ef4444;
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', '-apple-system', 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
@@ -28,87 +29,94 @@
             margin: 0;
             padding: 40px 20px;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             background: var(--card-bg);
             padding: 2.5rem;
             border-radius: 1.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
             width: 100%;
-            max-width: 650px;
+            max-width: 500px; /* Streamlined width for a more focused app feel */
         }
 
-        h2, h3 { text-align: center; color: var(--primary-color); margin-top: 0; }
+        h2, h3 { text-align: center; color: var(--primary-color); margin-top: 0; letter-spacing: -0.5px; }
         
-        /* Auth Screen Styles */
+        /* AUTHENTICATION SCREEN */
         #auth_screen { display: block; text-align: center; }
-        .auth-toggle { color: var(--primary-color); cursor: pointer; text-decoration: underline; font-size: 0.9rem; margin-top: 1rem; display: inline-block;}
+        .auth-toggle { color: var(--primary-color); cursor: pointer; font-size: 0.95rem; margin-top: 1.5rem; display: inline-block; font-weight: 600; }
         
-        /* App Screen Styles */
+        /* MAIN APP HEADER */
         #app_screen { display: none; }
         .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
-        .logout-btn { background: #ef4444; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; font-size: 0.8rem; cursor: pointer; }
-        .logout-btn:hover { background: #dc2626; }
+        .logout-btn { background: #fee2e2; color: var(--danger-color); padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .logout-btn:hover { background: var(--danger-color); color: white; }
 
+        /* FORM INPUTS */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-group { margin-bottom: 1.25rem; text-align: left; }
         
         label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
         input[type="number"], input[type="date"], input[type="email"], input[type="password"], select {
             width: 100%; padding: 0.875rem 1rem; border: 1.5px solid var(--border-color);
-            border-radius: 0.75rem; box-sizing: border-box; font-size: 1rem; background-color: #f8fafc; color: var(--text-main);
+            border-radius: 0.75rem; box-sizing: border-box; font-size: 1rem; background-color: var(--result-bg); color: var(--text-main); font-family: inherit;
         }
-        input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #ffffff; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
         
         .rate-input-group { display: flex; gap: 0.5rem; }
         .rate-input-group input { flex: 2; }
-        .rate-input-group select { flex: 1; cursor: pointer; }
+        .rate-input-group select { flex: 1; cursor: pointer; padding: 0.5rem; }
 
-        .term-toggle { display: flex; background: #f1f5f9; border-radius: 0.75rem; padding: 0.25rem; margin-bottom: 1.5rem; }
-        .term-toggle label { flex: 1; text-align: center; padding: 0.75rem; margin: 0; cursor: pointer; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease; }
+        /* SEGMENTED CONTROL (Mobile App Style) */
+        .term-toggle { display: flex; background: var(--border-color); border-radius: 0.75rem; padding: 0.25rem; margin-bottom: 1.5rem; }
+        .term-toggle label { flex: 1; text-align: center; padding: 0.75rem; margin: 0; cursor: pointer; border-radius: 0.5rem; font-weight: 600; color: var(--text-muted); transition: all 0.2s ease; font-size: 0.95rem; }
         .term-toggle input[type="radio"] { display: none; }
-        .term-toggle input[type="radio"]:checked + label { background: var(--primary-color); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .term-toggle input[type="radio"]:checked + label { background: var(--card-bg); color: var(--primary-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .checkbox-group input { width: auto; transform: scale(1.2); cursor: pointer; }
-        .checkbox-group label { margin: 0; cursor: pointer; }
-
-        /* Button Layouts */
-        .btn-group { display: flex; gap: 1rem; margin-top: 0.5rem; }
-        button { flex: 1; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
-        button:hover { background-color: var(--primary-hover); }
-        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
-        
-        button.btn-clear { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border-color); }
+        /* BUTTONS */
+        .btn-group { display: flex; gap: 0.75rem; margin-top: 1rem; }
+        button.primary-btn { flex: 2; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
+        button.primary-btn:hover { background-color: var(--primary-hover); }
+        button.btn-clear { flex: 1; background-color: #f1f5f9; color: var(--text-muted); border: 1.5px solid var(--border-color); border-radius: 0.75rem; font-weight: 600; cursor: pointer; }
         button.btn-clear:hover { background-color: #e2e8f0; color: var(--text-main); }
-
-        .btn-secondary { background-color: #f8fafc; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 1rem; }
-        .btn-secondary:hover { background-color: var(--result-bg); }
-
-        .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; animation: fadeIn 0.4s ease-out; }
-        .card { background-color: var(--result-bg); padding: 1rem; border-radius: 1rem; text-align: center; }
-        .card span { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem; }
-        .card strong { font-size: 1.2rem; color: var(--primary-hover); }
-
-        .saved-list { margin-top: 2rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem; }
-        .saved-item { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
-        .saved-item div span { display: block; font-size: 0.8rem; color: var(--text-muted); }
         
-        .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
-        .success-msg { color: var(--primary-color); margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
+        .btn-secondary { width: 100%; padding: 1rem; background-color: #ecfdf5; color: var(--primary-color); border: 2px dashed var(--primary-color); border-radius: 0.75rem; font-weight: 700; margin-top: 1.5rem; cursor: pointer; }
+        .btn-secondary:hover { background-color: #d1fae5; }
+
+        /* RESULTS CARDS */
+        .summary-cards { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2rem; animation: fadeIn 0.4s ease-out; }
+        .card { background-color: var(--result-bg); padding: 1.25rem; border-radius: 1rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        .card span { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .card strong { font-size: 1.25rem; color: var(--text-main); font-weight: 800; }
+        
+        /* Highlight the main EMI card */
+        .card.highlight { background-color: var(--primary-color); border: none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .card.highlight span, .card.highlight strong { color: #ffffff; }
+
+        /* SAVED LIST */
+        .saved-list { margin-top: 2.5rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem; }
+        .saved-item { background: var(--card-bg); padding: 1.25rem; border-radius: 1rem; margin-bottom: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .saved-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .saved-item strong { font-size: 1.1rem; color: var(--text-main); }
+        .saved-item .emi-val { color: var(--primary-color); font-weight: 800; font-size: 1.15rem; }
+        .saved-item span { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+
+        .error-msg { color: var(--danger-color); margin-top: 1rem; font-size: 0.9rem; font-weight: 600; text-align: center; }
+        .success-msg { color: var(--primary-color); margin-top: 1rem; font-size: 0.9rem; font-weight: 600; text-align: center; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Mobile Adjustments */
+        /* ==========================================
+           📱 DEDICATED MOBILE LAYOUT OVERRIDES 
+           ========================================== */
         @media (max-width: 600px) {
             body { padding: 0; background-color: var(--card-bg); }
-            .container { padding: 1.5rem; border-radius: 0; box-shadow: none; min-height: 100vh; }
+            .container { padding: 1.5rem; border-radius: 0; box-shadow: none; min-height: 100vh; max-width: 100%; border: none; }
             .grid-2 { grid-template-columns: 1fr; gap: 0; }
-            .summary-cards { grid-template-columns: 1fr; gap: 0.75rem; }
-            .saved-item { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-            .saved-item div { text-align: left !important; width: 100%; }
-            .btn-group { flex-direction: column; gap: 0.75rem; }
+            .header-bar h2 { font-size: 1.25rem; }
+            input[type="number"], input[type="date"], input[type="email"], input[type="password"], select { padding: 1rem; font-size: 16px; /* 16px prevents iOS auto-zoom */ }
+            button.primary-btn, button.btn-clear { padding: 1.15rem; }
         }
     </style>
 </head>
@@ -119,7 +127,7 @@
     <!-- AUTHENTICATION SCREEN -->
     <div id="auth_screen">
         <h2 id="auth_title">Sign In</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2rem;">Access your saved loan calculations securely.</p>
+        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem;">Access your saved calculations securely.</p>
         
         <div class="form-group">
             <label>Email</label>
@@ -130,7 +138,7 @@
             <input type="password" id="auth_pass" required>
         </div>
         
-        <button id="auth_btn" onclick="handleAuth()">Sign In</button>
+        <button class="primary-btn" id="auth_btn" onclick="handleAuth()" style="width: 100%;">Sign In</button>
         <div id="auth_error" class="error-msg"></div>
         
         <span class="auth-toggle" onclick="toggleAuthMode()" id="auth_toggle_text">Need an account? Sign Up here.</span>
@@ -144,28 +152,26 @@
         </div>
         
         <form id="loanForm" onsubmit="event.preventDefault(); calculateLoan();">
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>Loan Amount (₹)</label>
-                    <input type="number" id="principal" step="0.01" min="1" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Interest Rate (%)</label>
-                    <div class="rate-input-group">
-                        <input type="number" id="rate" step="0.01" min="0.1" required>
-                        <select id="rate_type">
-                            <option value="monthly">Monthly</option>
-                            <option value="annual">Annual</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label>Loan Amount (₹)</label>
+                <input type="number" id="principal" step="0.01" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Interest Rate (%)</label>
+                <div class="rate-input-group">
+                    <input type="number" id="rate" step="0.01" min="0.1" required>
+                    <select id="rate_type">
+                        <option value="monthly">Monthly</option>
+                        <option value="annual">Annual</option>
+                    </select>
                 </div>
             </div>
 
-            <label>Loan duration type:</label>
+            <label style="margin-top: 1.5rem;">Duration Type</label>
             <div class="term-toggle">
                 <input type="radio" id="type_months" name="term_type" value="months" checked onchange="toggleInputs()">
-                <label for="type_months">Enter Months</label>
+                <label for="type_months">Months</label>
                 <input type="radio" id="type_dates" name="term_type" value="dates" onchange="toggleInputs()">
                 <label for="type_dates">Date Range</label>
             </div>
@@ -176,35 +182,32 @@
             </div>
 
             <div id="dynamic_month_inputs" class="form-group">
-                <label>Duration (Months)</label>
+                <label>Total Months</label>
                 <input type="number" id="months" step="1" min="1">
             </div>
 
-            <!-- NEW: Round Off Toggle -->
-            <div class="checkbox-group">
-                <input type="checkbox" id="round_off">
-                <label for="round_off">Round off calculations to nearest Rupee</label>
-            </div>
-            
-            <!-- NEW: Added Clear Button to Group -->
+            <!-- Action Buttons -->
             <div class="btn-group">
-                <button type="submit">Calculate EMI</button>
+                <button type="submit" class="primary-btn">Calculate</button>
                 <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
             </div>
         </form>
 
+        <!-- Where the Output Prints -->
         <div id="results_container"></div>
         
         <!-- Save Data Controls -->
         <div id="save_container" style="display:none; text-align: center;">
-            <button class="btn-secondary" onclick="saveCalculation()">💾 Save This Calculation</button>
+            <button class="btn-secondary" onclick="saveCalculation()">+ Save to My List</button>
             <div id="save_msg" class="success-msg"></div>
         </div>
 
         <!-- Saved Data List -->
         <div class="saved-list">
-            <h3>Your Saved Calculations</h3>
-            <div id="saved_items_container">Loading saved items...</div>
+            <h3>Saved Loans</h3>
+            <div id="saved_items_container">
+                <p style='text-align:center; color:var(--text-muted); font-size:0.9rem;'>Loading...</p>
+            </div>
         </div>
     </div>
 </div>
@@ -310,7 +313,7 @@
             const querySnapshot = await getDocs(q);
             
             if (querySnapshot.empty) {
-                container.innerHTML = "<p style='text-align:center; color:#64748b; font-size:0.9rem;'>No saved calculations yet.</p>";
+                container.innerHTML = "<p style='text-align:center; color:var(--text-muted); font-size:0.9rem;'>No saved calculations yet.</p>";
                 return;
             }
 
@@ -323,19 +326,19 @@
                 let dateStr = new Date(data.timestamp).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
                 html += `
                 <div class="saved-item">
-                    <div>
-                        <strong>${formatINR(data.principal, data.isRounded)}</strong>
-                        <span>${data.months} Months @ ${data.rate}%</span>
+                    <div class="saved-row">
+                        <strong>${formatINR(data.principal)}</strong>
+                        <span class="emi-val">${formatINR(data.emi)} /mo</span>
                     </div>
-                    <div style="text-align:right;">
-                        <strong>EMI: ${formatINR(data.emi, data.isRounded)}</strong>
+                    <div class="saved-row" style="margin-top: 0.25rem;">
+                        <span>${data.months} Months @ ${data.rate}%</span>
                         <span>Saved: ${dateStr}</span>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         } catch (error) {
-            container.innerHTML = "Error loading data. Note: If you just created the Test database, wait 1 minute and refresh.";
+            container.innerHTML = "<p style='color:red; text-align:center;'>Error loading data.</p>";
             console.error(error);
         }
     }
@@ -357,23 +360,22 @@
         }
     };
 
-    // NEW: Clear Form Function
     window.clearForm = () => {
         document.getElementById('loanForm').reset();
-        document.getElementById('start_date').valueAsDate = new Date(); // Reset date specifically
-        document.getElementById('results_container').innerHTML = ''; // Hide results
-        document.getElementById('save_container').style.display = 'none'; // Hide save button
+        document.getElementById('start_date').valueAsDate = new Date(); 
+        document.getElementById('results_container').innerHTML = ''; 
+        document.getElementById('save_container').style.display = 'none'; 
         currentCalculation = null;
-        toggleInputs(); // Reset the UI toggle state
+        toggleInputs(); 
     };
 
-    // UPDATED: Added isRounded parameter to format nicely without decimals if chosen
-    function formatINR(amount, isRounded = false) {
+    // Force rounding to 0 decimal places automatically
+    function formatINR(amount) {
         return new Intl.NumberFormat('en-IN', { 
             style: 'currency', 
             currency: 'INR', 
-            minimumFractionDigits: isRounded ? 0 : 2,
-            maximumFractionDigits: isRounded ? 0 : 2
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
         }).format(amount);
     }
     window.formatINR = formatINR;
@@ -383,7 +385,6 @@
         const enteredRate = parseFloat(document.getElementById('rate').value);
         const rateType = document.getElementById('rate_type').value;
         const termType = document.querySelector('input[name="term_type"]:checked').value;
-        const isRoundOff = document.getElementById('round_off').checked; // NEW: Check rounding
         
         let totalMonths = 0;
         let monthlyRate = rateType === 'monthly' ? (enteredRate / 100) : ((enteredRate / 100) / 12);
@@ -400,26 +401,22 @@
         }
 
         if (principal > 0 && monthlyRate > 0 && totalMonths > 0) {
-            let emi = principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
-            let totalPayment = emi * totalMonths;
-            let totalInterest = totalPayment - principal;
+            let rawEmi = principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+            let rawTotalPayment = rawEmi * totalMonths;
+            let rawTotalInterest = rawTotalPayment - principal;
 
-            // NEW: Apply Rounding if checked
-            if (isRoundOff) {
-                emi = Math.round(emi);
-                totalPayment = Math.round(totalPayment);
-                totalInterest = Math.round(totalInterest);
-            }
+            // AUTOMATIC ROUNDING APPLIED HERE
+            let emi = Math.round(rawEmi);
+            let totalPayment = Math.round(rawTotalPayment);
+            let totalInterest = Math.round(rawTotalInterest);
 
-            // Prepare data for saving
-            currentCalculation = { principal, rate: enteredRate, months: totalMonths, emi, totalInterest, totalPayment, isRounded: isRoundOff };
+            currentCalculation = { principal, rate: enteredRate, months: totalMonths, emi, totalInterest, totalPayment };
 
-            // Render Output
             let htmlOutput = `
             <div class='summary-cards'>
-                <div class='card'><span>Monthly EMI</span><strong>${formatINR(emi, isRoundOff)}</strong></div>
-                <div class='card'><span>Total Interest</span><strong>${formatINR(totalInterest, isRoundOff)}</strong></div>
-                <div class='card'><span>Total Paid</span><strong>${formatINR(totalPayment, isRoundOff)}</strong></div>
+                <div class='card highlight'><span>Monthly EMI</span><strong>${formatINR(emi)}</strong></div>
+                <div class='card'><span>Total Interest</span><strong>${formatINR(totalInterest)}</strong></div>
+                <div class='card'><span>Total Paid</span><strong>${formatINR(totalPayment)}</strong></div>
             </div>`;
             
             document.getElementById('results_container').innerHTML = htmlOutput;
