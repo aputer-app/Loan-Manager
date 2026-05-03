@@ -1,8 +1,8 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Optimized for mobile devices: prevents weird zooming -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Loan Manager</title>
     <style>
@@ -41,12 +41,14 @@
 
         h2, h3 { text-align: center; color: var(--primary-color); margin-top: 0; }
         
+        /* Auth Screen Styles */
         #auth_screen { display: block; text-align: center; }
         .auth-toggle { color: var(--primary-color); cursor: pointer; text-decoration: underline; font-size: 0.9rem; margin-top: 1rem; display: inline-block;}
         
+        /* App Screen Styles */
         #app_screen { display: none; }
         .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
-        .logout-btn { background: #ef4444; color: white; border: none; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.8rem; cursor: pointer; }
+        .logout-btn { background: #ef4444; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; font-size: 0.8rem; cursor: pointer; }
         .logout-btn:hover { background: #dc2626; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -68,19 +70,29 @@
         .term-toggle input[type="radio"] { display: none; }
         .term-toggle input[type="radio"]:checked + label { background: var(--primary-color); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        button.primary-btn { width: 100%; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; margin-top: 0.5rem; }
-        button.primary-btn:hover { background-color: var(--primary-hover); }
+        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .checkbox-group input { width: auto; transform: scale(1.2); cursor: pointer; }
+        .checkbox-group label { margin: 0; cursor: pointer; }
+
+        /* Button Layouts */
+        .btn-group { display: flex; gap: 1rem; margin-top: 0.5rem; }
+        button { flex: 1; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
         
-        .btn-secondary { width: 100%; padding: 1rem; background-color: #f8fafc; color: var(--primary-color); border: 2px solid var(--primary-color); border-radius: 0.75rem; font-weight: 600; margin-top: 1rem; cursor: pointer; }
+        button.btn-clear { background-color: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border-color); }
+        button.btn-clear:hover { background-color: #e2e8f0; color: var(--text-main); }
+
+        .btn-secondary { background-color: #f8fafc; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 1rem; }
         .btn-secondary:hover { background-color: var(--result-bg); }
 
         .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; animation: fadeIn 0.4s ease-out; }
         .card { background-color: var(--result-bg); padding: 1rem; border-radius: 1rem; text-align: center; }
         .card span { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem; }
-        .card strong { font-size: 1.1rem; color: var(--primary-hover); }
+        .card strong { font-size: 1.2rem; color: var(--primary-hover); }
 
         .saved-list { margin-top: 2rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem; }
-        .saved-item { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        .saved-item { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
         .saved-item div span { display: block; font-size: 0.8rem; color: var(--text-muted); }
         
         .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
@@ -88,9 +100,7 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ==========================================
-           📱 MOBILE DEDICATED STYLES 
-           ========================================== */
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
             body { padding: 0; background-color: var(--card-bg); }
             .container { padding: 1.5rem; border-radius: 0; box-shadow: none; min-height: 100vh; }
@@ -98,6 +108,7 @@
             .summary-cards { grid-template-columns: 1fr; gap: 0.75rem; }
             .saved-item { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
             .saved-item div { text-align: left !important; width: 100%; }
+            .btn-group { flex-direction: column; gap: 0.75rem; }
         }
     </style>
 </head>
@@ -119,7 +130,7 @@
             <input type="password" id="auth_pass" required>
         </div>
         
-        <button class="primary-btn" id="auth_btn" onclick="handleAuth()">Sign In</button>
+        <button id="auth_btn" onclick="handleAuth()">Sign In</button>
         <div id="auth_error" class="error-msg"></div>
         
         <span class="auth-toggle" onclick="toggleAuthMode()" id="auth_toggle_text">Need an account? Sign Up here.</span>
@@ -168,8 +179,18 @@
                 <label>Duration (Months)</label>
                 <input type="number" id="months" step="1" min="1">
             </div>
+
+            <!-- NEW: Round Off Toggle -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="round_off">
+                <label for="round_off">Round off calculations to nearest Rupee</label>
+            </div>
             
-            <button class="primary-btn" type="submit">Calculate EMI</button>
+            <!-- NEW: Added Clear Button to Group -->
+            <div class="btn-group">
+                <button type="submit">Calculate EMI</button>
+                <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
+            </div>
         </form>
 
         <div id="results_container"></div>
@@ -188,14 +209,13 @@
     </div>
 </div>
 
-<!-- REALTIME DATABASE SDKs -->
+<!-- FIREBASE SDKs (Modular version 9+) -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
         from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    // Switched from Firestore to Realtime Database
-    import { getDatabase, ref, push, set, query, orderByChild, equalTo, get } 
-        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } 
+        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     // ==========================================
     // ⚠️ PASTE YOUR FIREBASE CONFIG HERE ⚠️
@@ -211,12 +231,14 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getDatabase(app); // Initializing Realtime Database
+    const db = getFirestore(app);
 
+    // Global variables
     let isLoginMode = true;
     let currentUser = null;
     let currentCalculation = null;
 
+    // ================== AUTH LOGIC ==================
     window.toggleAuthMode = () => {
         isLoginMode = !isLoginMode;
         document.getElementById('auth_title').innerText = isLoginMode ? "Sign In" : "Create Account";
@@ -257,28 +279,23 @@
         }
     });
 
-    // ================== REALTIME DATABASE LOGIC ==================
+    // ================== DATABASE LOGIC ==================
     window.saveCalculation = async () => {
         if (!currentUser || !currentCalculation) return;
         const msgDiv = document.getElementById('save_msg');
-        msgDiv.innerText = "Saving to database...";
-        msgDiv.style.color = "var(--text-muted)";
+        msgDiv.innerText = "Saving...";
         
         try {
-            const calcRef = ref(db, 'calculations');
-            const newCalcRef = push(calcRef);
-            await set(newCalcRef, {
+            await addDoc(collection(db, "calculations"), {
                 userId: currentUser.uid,
                 timestamp: new Date().toISOString(),
                 ...currentCalculation
             });
-            
             msgDiv.innerText = "Saved successfully!";
-            msgDiv.style.color = "var(--primary-color)";
             setTimeout(() => msgDiv.innerText = "", 3000);
             fetchSavedCalculations();
         } catch (error) {
-            msgDiv.innerText = "Error saving data. Check rules.";
+            msgDiv.innerText = "Error saving. Check console.";
             msgDiv.style.color = "red";
             console.error(error);
         }
@@ -289,20 +306,17 @@
         if (!currentUser) return;
         
         try {
-            const calcRef = ref(db, 'calculations');
-            const userQuery = query(calcRef, orderByChild('userId'), equalTo(currentUser.uid));
-            const snapshot = await get(userQuery);
+            const q = query(collection(db, "calculations"), where("userId", "==", currentUser.uid));
+            const querySnapshot = await getDocs(q);
             
-            if (!snapshot.exists()) {
+            if (querySnapshot.empty) {
                 container.innerHTML = "<p style='text-align:center; color:#64748b; font-size:0.9rem;'>No saved calculations yet.</p>";
                 return;
             }
 
             let html = "";
             const docs = [];
-            snapshot.forEach((childSnapshot) => {
-                docs.push(childSnapshot.val());
-            });
+            querySnapshot.forEach((doc) => docs.push(doc.data()));
             docs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             docs.forEach((data) => {
@@ -310,23 +324,23 @@
                 html += `
                 <div class="saved-item">
                     <div>
-                        <strong>${formatINR(data.principal)}</strong>
+                        <strong>${formatINR(data.principal, data.isRounded)}</strong>
                         <span>${data.months} Months @ ${data.rate}%</span>
                     </div>
                     <div style="text-align:right;">
-                        <strong>EMI: ${formatINR(data.emi)}</strong>
+                        <strong>EMI: ${formatINR(data.emi, data.isRounded)}</strong>
                         <span>Saved: ${dateStr}</span>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         } catch (error) {
-            container.innerHTML = "<p style='color:red; text-align:center;'>Unable to load data. Please update Database Rules.</p>";
+            container.innerHTML = "Error loading data. Note: If you just created the Test database, wait 1 minute and refresh.";
             console.error(error);
         }
     }
 
-    // ================== CALCULATOR LOGIC ==================
+    // ================== FORM CONTROLS ==================
     document.getElementById('start_date').valueAsDate = new Date();
 
     window.toggleInputs = () => {
@@ -343,15 +357,33 @@
         }
     };
 
-    function formatINR(amount) {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
+    // NEW: Clear Form Function
+    window.clearForm = () => {
+        document.getElementById('loanForm').reset();
+        document.getElementById('start_date').valueAsDate = new Date(); // Reset date specifically
+        document.getElementById('results_container').innerHTML = ''; // Hide results
+        document.getElementById('save_container').style.display = 'none'; // Hide save button
+        currentCalculation = null;
+        toggleInputs(); // Reset the UI toggle state
+    };
+
+    // UPDATED: Added isRounded parameter to format nicely without decimals if chosen
+    function formatINR(amount, isRounded = false) {
+        return new Intl.NumberFormat('en-IN', { 
+            style: 'currency', 
+            currency: 'INR', 
+            minimumFractionDigits: isRounded ? 0 : 2,
+            maximumFractionDigits: isRounded ? 0 : 2
+        }).format(amount);
     }
+    window.formatINR = formatINR;
 
     window.calculateLoan = () => {
         const principal = parseFloat(document.getElementById('principal').value);
         const enteredRate = parseFloat(document.getElementById('rate').value);
         const rateType = document.getElementById('rate_type').value;
         const termType = document.querySelector('input[name="term_type"]:checked').value;
+        const isRoundOff = document.getElementById('round_off').checked; // NEW: Check rounding
         
         let totalMonths = 0;
         let monthlyRate = rateType === 'monthly' ? (enteredRate / 100) : ((enteredRate / 100) / 12);
@@ -368,21 +400,30 @@
         }
 
         if (principal > 0 && monthlyRate > 0 && totalMonths > 0) {
-            const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
-            const totalPayment = emi * totalMonths;
-            const totalInterest = totalPayment - principal;
+            let emi = principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+            let totalPayment = emi * totalMonths;
+            let totalInterest = totalPayment - principal;
 
-            currentCalculation = { principal, rate: enteredRate, months: totalMonths, emi, totalInterest, totalPayment };
+            // NEW: Apply Rounding if checked
+            if (isRoundOff) {
+                emi = Math.round(emi);
+                totalPayment = Math.round(totalPayment);
+                totalInterest = Math.round(totalInterest);
+            }
 
+            // Prepare data for saving
+            currentCalculation = { principal, rate: enteredRate, months: totalMonths, emi, totalInterest, totalPayment, isRounded: isRoundOff };
+
+            // Render Output
             let htmlOutput = `
             <div class='summary-cards'>
-                <div class='card'><span>Monthly EMI</span><strong>${formatINR(emi)}</strong></div>
-                <div class='card'><span>Total Interest</span><strong>${formatINR(totalInterest)}</strong></div>
-                <div class='card'><span>Total Paid</span><strong>${formatINR(totalPayment)}</strong></div>
+                <div class='card'><span>Monthly EMI</span><strong>${formatINR(emi, isRoundOff)}</strong></div>
+                <div class='card'><span>Total Interest</span><strong>${formatINR(totalInterest, isRoundOff)}</strong></div>
+                <div class='card'><span>Total Paid</span><strong>${formatINR(totalPayment, isRoundOff)}</strong></div>
             </div>`;
             
             document.getElementById('results_container').innerHTML = htmlOutput;
-            document.getElementById('save_container').style.display = 'block';
+            document.getElementById('save_container').style.display = 'block'; 
         }
     };
     
@@ -391,4 +432,3 @@
 
 </body>
 </html>
-
