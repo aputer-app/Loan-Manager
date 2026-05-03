@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Rupee Loan Calculator Pro</title>
+    <style>
+        :root {
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --bg-color: #ecfdf5;
+            --card-bg: #ffffff;
+            --text-main: #064e3b;
+            --text-muted: #475569;
+            --result-bg: #d1fae5;
+            --border-color: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        h2, h3 { text-align: center; color: var(--primary-color); margin-top: 0; }
+        
+        /* Auth Screen Styles */
+        #auth_screen { display: block; text-align: center; }
+        .auth-toggle { color: var(--primary-color); cursor: pointer; text-decoration: underline; font-size: 0.9rem; margin-top: 1rem; display: inline-block;}
+        
+        /* App Screen Styles */
+        #app_screen { display: none; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+        .logout-btn { background: #ef4444; padding: 0.5rem 1rem; font-size: 0.8rem; width: auto; margin: 0; }
+        .logout-btn:hover { background: #dc2626; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+        input[type="number"], input[type="date"], input[type="email"], input[type="password"], select {
+            width: 100%; padding: 0.875rem 1rem; border: 1.5px solid var(--border-color);
+            border-radius: 0.75rem; box-sizing: border-box; font-size: 1rem; background-color: #f8fafc; color: var(--text-main);
+        }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #ffffff; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15); }
+        
+        .rate-input-group { display: flex; gap: 0.5rem; }
+        .rate-input-group input { flex: 2; }
+        .rate-input-group select { flex: 1; cursor: pointer; }
+
+        .term-toggle { display: flex; background: #f1f5f9; border-radius: 0.75rem; padding: 0.25rem; margin-bottom: 1.5rem; }
+        .term-toggle label { flex: 1; text-align: center; padding: 0.75rem; margin: 0; cursor: pointer; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease; }
+        .term-toggle input[type="radio"] { display: none; }
+        .term-toggle input[type="radio"]:checked + label { background: var(--primary-color); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        button { width: 100%; padding: 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; margin-top: 0.5rem; }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        
+        .btn-secondary { background-color: #f8fafc; color: var(--primary-color); border: 2px solid var(--primary-color); margin-top: 1rem; }
+        .btn-secondary:hover { background-color: var(--result-bg); }
+
+        .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; animation: fadeIn 0.4s ease-out; }
+        .card { background-color: var(--result-bg); padding: 1rem; border-radius: 1rem; text-align: center; }
+        .card span { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem; }
+        .card strong { font-size: 1.2rem; color: var(--primary-hover); }
+
+        .schedule-container { margin-top: 2rem; max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 0.75rem; animation: fadeIn 0.5s ease-out; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 0.75rem 1rem; text-align: right; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f8fafc; position: sticky; top: 0; font-weight: 600; color: var(--text-muted); box-shadow: 0 1px 0 var(--border-color); }
+        th:first-child, td:first-child { text-align: left; }
+        
+        .saved-list { margin-top: 2rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem; }
+        .saved-item { background: #f8fafc; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        .saved-item div span { display: block; font-size: 0.8rem; color: var(--text-muted); }
+        
+        .error-msg { color: #ef4444; margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
+        .success-msg { color: var(--primary-color); margin-top: 1rem; font-size: 0.9rem; font-weight: 600; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- AUTHENTICATION SCREEN -->
+    <div id="auth_screen">
+        <h2 id="auth_title">Sign In</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Access your saved loan calculations securely.</p>
+        
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="auth_email" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="auth_pass" required>
+        </div>
+        
+        <button id="auth_btn" onclick="handleAuth()">Sign In</button>
+        <div id="auth_error" class="error-msg"></div>
+        
+        <span class="auth-toggle" onclick="toggleAuthMode()" id="auth_toggle_text">Need an account? Sign Up here.</span>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div id="app_screen">
+        <div class="header-bar">
+            <h2 style="margin:0;">EMI Calculator</h2>
+            <button class="logout-btn" onclick="logOut()">Log Out</button>
+        </div>
+        
+        <form id="loanForm" onsubmit="event.preventDefault(); calculateLoan();">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Loan Amount (₹)</label>
+                    <input type="number" id="principal" step="0.01" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Interest Rate (%)</label>
+                    <div class="rate-input-group">
+                        <input type="number" id="rate" step="0.01" min="0.1" required>
+                        <select id="rate_type">
+                            <option value="monthly">Monthly</option>
+                            <option value="annual">Annual</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <label>Loan duration type:</label>
+            <div class="term-toggle">
+                <input type="radio" id="type_months" name="term_type" value="months" checked onchange="toggleInputs()">
+                <label for="type_months">Enter Months</label>
+                <input type="radio" id="type_dates" name="term_type" value="dates" onchange="toggleInputs()">
+                <label for="type_dates">Date Range</label>
+            </div>
+
+            <div id="dynamic_date_inputs" class="grid-2" style="display: none;">
+                <div class="form-group"><label>Start Date</label><input type="date" id="start_date"></div>
+                <div class="form-group"><label>End Date</label><input type="date" id="end_date"></div>
+            </div>
+
+            <div id="dynamic_month_inputs" class="form-group">
+                <label>Duration (Months)</label>
+                <input type="number" id="months" step="1" min="1">
+            </div>
+            
+            <button type="submit">Calculate EMI</button>
+        </form>
+
+        <div id="results_container"></div>
+        
+        <!-- Save Data Controls -->
+        <div id="save_container" style="display:none; text-align: center;">
+            <button class="btn-secondary" onclick="saveCalculation()">💾 Save This Calculation</button>
+            <div id="save_msg" class="success-msg"></div>
+        </div>
+
+        <!-- Saved Data List -->
+        <div class="saved-list">
+            <h3>Your Saved Calculations</h3>
+            <div id="saved_items_container">Loading saved items...</div>
+        </div>
+    </div>
+</div>
+
+<!-- FIREBASE SDKs (Modular version 9+) -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } 
+        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } 
+        from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // ==========================================
+    // ⚠️ PASTE YOUR FIREBASE CONFIG HERE ⚠️
+    // ==========================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyB_NKT9tlErb2phNk0hkuTKw2NmmOH2DeM",
+        authDomain: "loan-manager-810f0.firebaseapp.com",
+        projectId: "loan-manager-810f0",
+        storageBucket: "loan-manager-810f0.firebasestorage.app",
+        messagingSenderId: "176740359480",
+        appId: "1:176740359480:web:32ccd01c95592beb5335cd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Global variables
+    let isLoginMode = true;
+    let currentUser = null;
+    let currentCalculation = null; // Holds data temporarily to save it
+
+    // ================== AUTH LOGIC ==================
+    window.toggleAuthMode = () => {
+        isLoginMode = !isLoginMode;
+        document.getElementById('auth_title').innerText = isLoginMode ? "Sign In" : "Create Account";
+        document.getElementById('auth_btn').innerText = isLoginMode ? "Sign In" : "Sign Up";
+        document.getElementById('auth_toggle_text').innerText = isLoginMode ? "Need an account? Sign Up here." : "Already have an account? Sign In.";
+        document.getElementById('auth_error').innerText = "";
+    };
+
+    window.handleAuth = async () => {
+        const email = document.getElementById('auth_email').value;
+        const pass = document.getElementById('auth_pass').value;
+        const errorDiv = document.getElementById('auth_error');
+        errorDiv.innerText = "Processing...";
+        
+        try {
+            if (isLoginMode) {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } else {
+                await createUserWithEmailAndPassword(auth, email, pass);
+            }
+        } catch (error) {
+            errorDiv.innerText = error.message.replace("Firebase: ", "");
+        }
+    };
+
+    window.logOut = () => { signOut(auth); };
+
+    // Listen for login state changes
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('auth_screen').style.display = 'none';
+            document.getElementById('app_screen').style.display = 'block';
+            fetchSavedCalculations();
+        } else {
+            currentUser = null;
+            document.getElementById('auth_screen').style.display = 'block';
+            document.getElementById('app_screen').style.display = 'none';
+        }
+    });
+
+    // ================== DATABASE LOGIC ==================
+    window.saveCalculation = async () => {
+        if (!currentUser || !currentCalculation) return;
+        const msgDiv = document.getElementById('save_msg');
+        msgDiv.innerText = "Saving...";
+        
+        try {
+            await addDoc(collection(db, "calculations"), {
+                userId: currentUser.uid,
+                timestamp: new Date().toISOString(),
+                ...currentCalculation
+            });
+            msgDiv.innerText = "Saved successfully!";
+            setTimeout(() => msgDiv.innerText = "", 3000);
+            fetchSavedCalculations();
+        } catch (error) {
+            msgDiv.innerText = "Error saving. Check console.";
+            msgDiv.style.color = "red";
+            console.error(error);
+        }
+    };
+
+    async function fetchSavedCalculations() {
+        const container = document.getElementById('saved_items_container');
+        if (!currentUser) return;
+        
+        try {
+            const q = query(collection(db, "calculations"), where("userId", "==", currentUser.uid));
+            const querySnapshot = await getDocs(q);
+            
+            if (querySnapshot.empty) {
+                container.innerHTML = "<p style='text-align:center; color:#64748b; font-size:0.9rem;'>No saved calculations yet.</p>";
+                return;
+            }
+
+            let html = "";
+            // Sort by newest first natively in JS array
+            const docs = [];
+            querySnapshot.forEach((doc) => docs.push(doc.data()));
+            docs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            docs.forEach((data) => {
+                let dateStr = new Date(data.timestamp).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+                html += `
+                <div class="saved-item">
+                    <div>
+                        <strong>${formatINR(data.principal)}</strong>
+                        <span>${data.months} Months @ ${data.rate}%</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <strong>EMI: ${formatINR(data.emi)}</strong>
+                        <span>Saved: ${dateStr}</span>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        } catch (error) {
+            container.innerHTML = "Error loading data. Note: If you just created the Test database, wait 1 minute and refresh.";
+            console.error(error);
+        }
+    }
+
+    // ================== CALCULATOR LOGIC ==================
+    document.getElementById('start_date').valueAsDate = new Date();
+
+    window.toggleInputs = () => {
+        const typeMonths = document.getElementById('type_months').checked;
+        const monthInputs = document.getElementById('dynamic_month_inputs');
+        const dateInputs = document.getElementById('dynamic_date_inputs');
+        
+        if (typeMonths) {
+            monthInputs.style.display = 'block';
+            dateInputs.style.display = 'none';
+        } else {
+            monthInputs.style.display = 'none';
+            dateInputs.style.display = 'grid';
+        }
+    };
+
+    function formatINR(amount) {
+        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
+    }
+    window.formatINR = formatINR;
+
+    window.calculateLoan = () => {
+        const principal = parseFloat(document.getElementById('principal').value);
+        const enteredRate = parseFloat(document.getElementById('rate').value);
+        const rateType = document.getElementById('rate_type').value;
+        const termType = document.querySelector('input[name="term_type"]:checked').value;
+        
+        let totalMonths = 0;
+        let monthlyRate = rateType === 'monthly' ? (enteredRate / 100) : ((enteredRate / 100) / 12);
+
+        if (termType === 'months') {
+            totalMonths = parseInt(document.getElementById('months').value) || 0;
+        } else {
+            const d1 = new Date(document.getElementById('start_date').value);
+            const d2 = new Date(document.getElementById('end_date').value);
+            if(d1 && d2) {
+                totalMonths = (d2.getFullYear() - d1.getFullYear()) * 12 + (d2.getMonth() - d1.getMonth());
+                if (d2.getDate() > d1.getDate()) totalMonths += 1;
+            }
+        }
+
+        if (principal > 0 && monthlyRate > 0 && totalMonths > 0) {
+            const emi = principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+            const totalPayment = emi * totalMonths;
+            const totalInterest = totalPayment - principal;
+
+            // Prepare data for saving
+            currentCalculation = { principal, rate: enteredRate, months: totalMonths, emi, totalInterest, totalPayment };
+
+            // Render Output
+            let htmlOutput = `
+            <div class='summary-cards'>
+                <div class='card'><span>Monthly EMI</span><strong>${formatINR(emi)}</strong></div>
+                <div class='card'><span>Total Interest</span><strong>${formatINR(totalInterest)}</strong></div>
+                <div class='card'><span>Total Paid</span><strong>${formatINR(totalPayment)}</strong></div>
+            </div>`;
+            
+            document.getElementById('results_container').innerHTML = htmlOutput;
+            document.getElementById('save_container').style.display = 'block'; // Show save button
+        }
+    };
+    
+    // Init inputs on load
+    toggleInputs();
+</script>
+
+</body>
+</html>
+
